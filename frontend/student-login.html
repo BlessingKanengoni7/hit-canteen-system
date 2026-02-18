@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Login | HIT Canteen</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="logo-container">
+        <h1>HARARE INSTITUTE OF TECHNOLOGY</h1>
+        <span>Canteen Digital Ticketing System</span>
+    </div>
+
+    <div class="top-right">
+        <a href="index.html" class="login-btn">
+            <i class="fas fa-home"></i> Home
+        </a>
+    </div>
+</header>
+
+<main class="auth-wrapper student-auth-wrapper">
+
+    <div class="auth-card">
+        <h2><i class="fas fa-user-graduate"></i> Student Login</h2>
+
+        <form id="studentLoginForm" autocomplete="off">
+
+            <div class="form-group">
+                <label>Registration Number</label>
+                <input
+                    type="text"
+                    id="studentReg"
+                    required
+                    autocomplete="off"
+                    oninput="this.value = this.value.toUpperCase()"
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="studentPassword"
+                    required
+                    autocomplete="off"
+                >
+            </div>
+
+            <button type="submit" class="login-btn student-btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+
+        </form>
+    </div>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const loginForm = document.getElementById("studentLoginForm");
+    const regInput = document.getElementById("studentReg");
+    const passInput = document.getElementById("studentPassword");
+
+    regInput.value = "";
+    passInput.value = "";
+
+    const VALID_STUDENTS = {
+        "H240277N": "111111",
+        "H240576F": "222222",
+        "H20775R":  "333333",
+        "H240104Y": "444444",
+        "H240088G": "555555"
+    };
+
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const reg = regInput.value.trim().toUpperCase();
+        const password = passInput.value.trim();
+
+        if (VALID_STUDENTS[reg] && VALID_STUDENTS[reg] === password) {
+
+            // isolate student session
+            sessionStorage.removeItem("ADMIN_TOKEN");
+            sessionStorage.removeItem("ADMIN_ROLE");
+
+            sessionStorage.setItem("STUDENT_AUTH", "true");
+            sessionStorage.setItem("STUDENT_REG", reg);
+
+            window.location.href = "student-dashboard.html";
+
+        } else {
+            alert("❌ Invalid Registration Number or Password");
+            passInput.value = "";
+            passInput.focus();
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>

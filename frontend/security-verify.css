@@ -1,0 +1,241 @@
+/* ================= GLOBAL ================= */
+body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top, #0c1b2e, #081424);
+    color: white;
+    margin: 0;
+}
+
+/* ================= HEADER ================= */
+.header {
+    background: linear-gradient(90deg, #071a33, #0b2344);
+    padding: 1.2rem 2.5rem;
+}
+
+.logo-container h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.3rem;
+    color: gold;
+    margin: 0;
+}
+
+.logo-container span {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+/* ================= UTIL ================= */
+.hidden {
+    display: none;
+}
+
+/* ================= WRAPPERS ================= */
+.auth-wrapper,
+.scanner-wrapper {
+    min-height: calc(100vh - 110px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+/* ================= AUTH CARD ================= */
+.auth-card {
+    background: linear-gradient(180deg, #122a4a, #0b1f3a);
+    padding: 3rem;
+    width: 380px;
+    border-radius: 12px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    text-align: center;
+}
+
+/* ================= SCANNER GRID ================= */
+.scanner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    width: 90%;
+    max-width: 1100px;
+}
+
+/* ================= CAMERA ================= */
+.scanner-camera {
+    background: #000;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+}
+
+#qr-video {
+    width: 100%;
+    height: 280px;
+    border-radius: 8px;
+    background: black;
+}
+
+.scan-btn {
+    margin-top: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: #ff7a45;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.scan-btn:hover {
+    opacity: 0.9;
+}
+
+/* ================= RESULTS ================= */
+.scanner-results {
+    background: linear-gradient(180deg, #122a4a, #0b1f3a);
+    padding: 2rem;
+    border-radius: 12px;
+}
+
+.status {
+    font-size: 1.4rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.status.approved {
+    background: #1f8f4a;
+}
+
+.status.denied {
+    background: #b73c3c;
+}
+
+.status.neutral {
+    background: #2c3e50;
+}
+
+/* ================= ACTION BUTTONS ================= */
+.result-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.result-actions button {
+    flex: 1;
+    padding: 0.7rem;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#manualBtn {
+    background: #6aa8ff;
+    color: #081424;
+}
+
+#logoutBtn {
+    background: #444;
+    color: white;
+}
+
+/* ================= FOOTER ================= */
+.security-footer {
+    background: #071a33;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.security-footer .gold {
+    color: gold;
+}
+
+/* ================= VERIFICATION STATE HEADER ================= */
+
+.verify-header {
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* DEFAULT / IDLE */
+.verify-header.neutral {
+    background: linear-gradient(180deg, #0c1b2e, #081424);
+}
+
+/* APPROVED */
+.verify-header.approved {
+    background: linear-gradient(180deg, #0f5132, #198754);
+    box-shadow: 0 0 40px rgba(25, 135, 84, 0.6);
+}
+
+/* DENIED */
+.verify-header.denied {
+    background: linear-gradient(180deg, #842029, #dc3545);
+    box-shadow: 0 0 40px rgba(220, 53, 69, 0.6);
+}
+
+/* ================= VERIFY HEADER STATES ================= */
+
+#verifyHeader {
+    transition: background 0.6s ease, box-shadow 0.6s ease;
+}
+
+/* Neutral */
+#verifyHeader.neutral {
+    background: linear-gradient(90deg, #071a33, #0b2344);
+}
+
+/* Approved */
+#verifyHeader.approved {
+    background: linear-gradient(90deg, #1e7f43, #2ecc71);
+    box-shadow: 0 0 35px rgba(46, 204, 113, 0.6);
+}
+
+/* Denied */
+#verifyHeader.denied {
+    background: linear-gradient(90deg, #8e1b1b, #e74c3c);
+    box-shadow: 0 0 35px rgba(231, 76, 60, 0.6);
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 rgba(46,204,113,0.4); }
+    50% { box-shadow: 0 0 40px rgba(46,204,113,0.8); }
+    100% { box-shadow: 0 0 0 rgba(46,204,113,0.4); }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
+
+#verifyHeader.pulse {
+    animation: pulseGlow 1.2s ease-in-out;
+}
+
+#verifyHeader.shake {
+    animation: shake 0.4s ease-in-out;
+}
+
+.audio-btn {
+    width: 100%;
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #d4af37, #ffd700);
+    color: #071a33;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.audio-btn.enabled {
+    background: #1f8f4a;
+    color: white;
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Canteen Dashboard | HIT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:#fff;
+}
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 40px;
+    background:rgba(0,0,0,0.3);
+}
+.container{ padding:40px; }
+.card{
+    background:#ffffff;
+    color:#222;
+    padding:25px;
+    border-radius:10px;
+    margin-bottom:30px;
+}
+input,button{ padding:8px; margin:5px 0; }
+button{
+    background:#2c5364;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+ul{ list-style:none; padding:0; }
+li{ padding:8px; border-bottom:1px solid #eee; }
+.logout-btn{
+    background:#ff4d4d;
+    border:none;
+    padding:8px 15px;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Canteen Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+
+<div class="card">
+    <h2>Add Meal</h2>
+    <input id="mealName" placeholder="Meal Name">
+    <input id="mealPrice" type="number" placeholder="Price">
+    <br>
+    <button onclick="addMeal()">Add Meal</button>
+</div>
+
+<div class="card">
+    <h2>Available Meals</h2>
+    <button onclick="loadMeals()">Refresh Meals</button>
+    <ul id="mealList"></ul>
+</div>
+
+</div>
+
+<script>
+
+if (!sessionStorage.getItem("ADMIN_TOKEN")) {
+    window.location.href = "admin-login.html";
+}
+
+function logout(){
+    sessionStorage.clear();
+    window.location.href="admin-login.html";
+}
+
+async function addMeal(){
+
+    const res = await fetch("http://localhost:5000/api/canteen/add",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+sessionStorage.getItem("ADMIN_TOKEN")
+        },
+        body:JSON.stringify({
+            name:mealName.value,
+            price:mealPrice.value
+        })
+    });
+
+    const data = await res.json();
+
+    alert(data.message || "Meal Added");
+    loadMeals();
+}
+
+async function loadMeals(){
+
+    const res = await fetch("http://localhost:5000/api/canteen/all");
+    const data = await res.json();
+
+    if (!data.success) {
+        alert("Failed to load meals");
+        return;
+    }
+
+    mealList.innerHTML = data.meals.map(m =>
+        `<li>${m.name} - $${m.price}</li>`
+    ).join("");
+}
+
+loadMeals();
+
+</script>
+
+</body>
+</html>

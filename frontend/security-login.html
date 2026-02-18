@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Login – HIT Canteen</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="security-login.css">
+</head>
+
+<body class="security-login">
+
+<header class="header">
+    <div class="logo-container">
+        <h1>HARARE INSTITUTE OF TECHNOLOGY</h1>
+        <span>Security Verification Portal</span>
+    </div>
+
+    <div class="top-right">
+        <a href="index.html" class="login-btn">
+            <i class="fas fa-home"></i> Home
+        </a>
+    </div>
+</header>
+
+<section class="hero-image"></section>
+
+<main class="main-container">
+
+    <div class="system-title">
+        <h2>Security Officer Login</h2>
+        <p>Authorized security personnel only.</p>
+    </div>
+
+    <div class="access-grid" style="max-width:420px;margin:0 auto;">
+        <div class="access-card security">
+
+            <div class="card-icon">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+
+            <h3>Security Authentication</h3>
+
+            <form id="securityLoginForm" autocomplete="off">
+
+                <div class="form-group">
+                    <label><i class="fas fa-id-badge"></i> Security ID</label>
+                    <input
+                        type="text"
+                        id="securityId"
+                        name="security_id_unique"
+                        class="security-input"
+                        placeholder="SEC-001"
+                        pattern="^SEC-\d{3}$"
+                        required
+                        oninput="this.value=this.value.toUpperCase()"
+                        autocomplete="new-password"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-key"></i> Access PIN</label>
+                    <input
+                        type="password"
+                        id="securityPin"
+                        name="security_pin_unique"
+                        class="security-input pin-input"
+                        placeholder="Enter Access PIN"
+                        inputmode="numeric"
+                        pattern="\d{4,6}"
+                        maxlength="6"
+                        required
+                        autocomplete="new-password"
+                    >
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-qrcode"></i> LOGIN
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</main>
+
+<footer class="security-footer">
+    © 2026 HIT • Security Access Module
+</footer>
+
+<script>
+window.onload = function() {
+    document.querySelectorAll("input").forEach(input => input.value = "");
+};
+</script>
+
+<script src="security-login.js"></script>
+</body>
+</html>

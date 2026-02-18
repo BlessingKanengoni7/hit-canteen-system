@@ -1,0 +1,22 @@
+# ======================
+# NODE
+# ======================
+node_modules/
+npm-debug.log
+package-lock.json
+
+# ======================
+# ENV FILES
+# ======================
+.env
+
+# ======================
+# DATABASE / LOCAL DATA
+# ======================
+backend/data/*.json
+
+# ======================
+# OS FILES
+# ======================
+.DS_Store
+Thumbs.db

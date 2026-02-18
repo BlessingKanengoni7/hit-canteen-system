@@ -1,0 +1,10 @@
+/* Security Login Specific Styling */
+
+.security-login .pin-input {
+    letter-spacing: 8px;
+    text-align: center;
+}
+
+.security-login .security-input::placeholder {
+    opacity: 0.6;
+}

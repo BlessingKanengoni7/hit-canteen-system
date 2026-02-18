@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Dashboard</title>
+<style>
+body{font-family:Arial;background:#0f2027;color:white;margin:0}
+.header{padding:20px;background:#203a43;display:flex;justify-content:space-between}
+.container{padding:30px}
+.card{background:white;color:black;padding:20px;margin-bottom:20px;border-radius:8px}
+button{padding:6px 12px;background:#203a43;color:white;border:none;border-radius:5px;cursor:pointer}
+.success{background:#d4edda;color:#155724;padding:15px;border-radius:5px}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h2>Student Dashboard</h2>
+<button onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+
+<div class="card" id="loginCard">
+<h3>Login</h3>
+<input id="studentIdInput" placeholder="Student ID">
+<button onclick="login()">Login</button>
+</div>
+
+<div class="card" id="welcomeCard" style="display:none">
+<h3 id="welcomeText"></h3>
+<p>Wallet Balance: $<span id="walletBalance"></span></p>
+</div>
+
+<div class="card" id="mealsCard" style="display:none">
+<h3>Available Meals</h3>
+<div id="mealList"></div>
+</div>
+
+<div class="card" id="cartCard" style="display:none">
+<h3>Cart</h3>
+<div id="cartItems"></div>
+<p>Total: $<span id="totalAmount">0.00</span></p>
+<button onclick="checkout()">Checkout</button>
+</div>
+
+<div class="card" id="historyCard" style="display:none">
+<h3>Order History</h3>
+<div id="orderHistory"></div>
+</div>
+
+</div>
+
+<script>
+
+let currentStudent = null;
+let cart = [];
+
+function logout(){ location.reload(); }
+
+async function login(){
+
+    const res = await fetch("http://localhost:5000/api/student/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ studentId: studentIdInput.value })
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+        alert(data.message);
+        return;
+    }
+
+    currentStudent = data.student;
+
+    loginCard.style.display="none";
+    welcomeCard.style.display="block";
+    mealsCard.style.display="block";
+    cartCard.style.display="block";
+    historyCard.style.display="block";
+
+    welcomeText.innerText = "Welcome " + currentStudent.fullName;
+    walletBalance.innerText = currentStudent.balance;
+
+    loadMeals();
+    loadOrderHistory();
+}
+
+async function loadMeals(){
+
+    const res = await fetch("http://localhost:5000/api/canteen/all");
+    const data = await res.json();
+
+    mealList.innerHTML = data.meals.map(meal => `
+        <div>
+            ${meal.name} - $${meal.price.toFixed(2)}
+            <input type="number" min="1" value="1" id="qty-${meal.name}">
+            <button onclick="addToCart('${meal.name}', ${meal.price})">Add</button>
+        </div>
+    `).join("");
+}
+
+function addToCart(name, price){
+
+    const qty = parseInt(document.getElementById("qty-"+name).value);
+
+    cart.push({ name, quantity: qty, price });
+
+    renderCart();
+}
+
+function renderCart(){
+
+    cartItems.innerHTML = cart.map(item =>
+        `<div>${item.name} x ${item.quantity}</div>`
+    ).join("");
+
+    const total = cart.reduce((sum,item)=> sum + (item.price * item.quantity),0);
+
+    totalAmount.innerText = total.toFixed(2);
+}
+
+async function checkout(){
+
+    if(cart.length===0){
+        alert("Cart empty");
+        return;
+    }
+
+    const total = cart.reduce((sum,item)=> sum + (item.price * item.quantity),0);
+
+    const res = await fetch("http://localhost:5000/api/student/checkout",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            studentId: currentStudent.studentId,
+            studentName: currentStudent.fullName,
+            meals: cart.map(item=>({
+                name:item.name,
+                quantity:item.quantity
+            })),
+            totalAmount: total
+        })
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+        alert(data.message);
+        return;
+    }
+
+    walletBalance.innerText = data.newBalance;
+
+    cartItems.innerHTML = `
+        <div class="success">
+            <h3>Order Successful</h3>
+            <p>Order Number: ${data.orderNumber}</p>
+            <img src="${data.qrCode}" width="200">
+        </div>
+    `;
+
+    cart = [];
+    totalAmount.innerText="0.00";
+
+    loadOrderHistory();
+}
+
+async function loadOrderHistory(){
+
+    const res = await fetch(`http://localhost:5000/api/student/orders/${currentStudent.studentId}`);
+    const data = await res.json();
+
+    if(!data.success) return;
+
+    orderHistory.innerHTML = data.orders.map(order => `
+        <div style="border-bottom:1px solid #ccc;padding:10px 0">
+            <strong>${order.orderNumber}</strong><br>
+            Total: $${order.totalAmount.toFixed(2)}<br>
+            Status: ${order.status}<br>
+            Date: ${new Date(order.timestamp).toLocaleString()}
+        </div>
+    `).join("");
+}
+
+</script>
+
+</body>
+</html>

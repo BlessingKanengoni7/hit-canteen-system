@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Finance Dashboard | HIT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:linear-gradient(135deg,#1c1c1c,#2b5876,#4e4376);
+    color:#fff;
+}
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 40px;
+    background:rgba(0,0,0,0.3);
+}
+.container{ padding:40px; }
+.card{
+    background:#ffffff;
+    color:#222;
+    padding:25px;
+    border-radius:10px;
+    margin-bottom:30px;
+}
+input,button{ padding:8px; margin:5px 0; }
+button{
+    background:#4e4376;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+ul{ list-style:none; padding:0; }
+li{ padding:8px; border-bottom:1px solid #eee; }
+.logout-btn{
+    background:#ff4d4d;
+    border:none;
+    padding:8px 15px;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Finance Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+
+<div class="card">
+    <h2>Register Student</h2>
+    <input id="studentId" placeholder="Student ID">
+    <input id="fullName" placeholder="Full Name">
+    <input id="initialAmount" type="number" placeholder="Initial Wallet Amount">
+    <br>
+    <button onclick="register()">Register Student</button>
+</div>
+
+<div class="card">
+    <h2>Credit Wallet</h2>
+    <input id="creditId" placeholder="Student ID">
+    <input id="creditAmount" type="number" placeholder="Amount">
+    <br>
+    <button onclick="credit()">Credit Wallet</button>
+</div>
+
+<div class="card">
+    <h2>All Students</h2>
+    <button onclick="loadStudents()">Refresh Students</button>
+    <ul id="studentList"></ul>
+</div>
+
+</div>
+
+<script>
+
+if (!sessionStorage.getItem("ADMIN_TOKEN")) {
+    window.location.href = "admin-login.html";
+}
+
+function logout(){
+    sessionStorage.clear();
+    window.location.href="admin-login.html";
+}
+
+async function register() {
+
+    const res = await fetch("http://localhost:5000/api/finance/register", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+sessionStorage.getItem("ADMIN_TOKEN")
+        },
+        body:JSON.stringify({
+            studentId: studentId.value,
+            fullName: fullName.value,
+            initialAmount: initialAmount.value
+        })
+    });
+
+    const data = await res.json();
+
+    alert(data.message || "Registered");
+    loadStudents();
+}
+
+async function credit() {
+
+    const res = await fetch("http://localhost:5000/api/finance/credit", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+sessionStorage.getItem("ADMIN_TOKEN")
+        },
+        body:JSON.stringify({
+            studentId: creditId.value,
+            amount: creditAmount.value
+        })
+    });
+
+    const data = await res.json();
+
+    alert(data.message || "Credited");
+    loadStudents();
+}
+
+async function loadStudents() {
+
+    const res = await fetch("http://localhost:5000/api/finance/all", {
+        headers:{
+            "Authorization":"Bearer "+sessionStorage.getItem("ADMIN_TOKEN")
+        }
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+        alert(data.message || "Failed to load students");
+        return;
+    }
+
+    studentList.innerHTML = data.students.map(s =>
+        `<li>${s.studentId} - ${s.fullName} - $${s.balance}</li>`
+    ).join("");
+}
+
+loadStudents();
+
+</script>
+
+</body>
+</html>
